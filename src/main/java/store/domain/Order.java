@@ -1,6 +1,5 @@
-package store.domain.order;
+package store.domain;
 
-import store.domain.Inventory;
 import store.dto.OrderCheckDto;
 import store.dto.OrderResultDto;
 

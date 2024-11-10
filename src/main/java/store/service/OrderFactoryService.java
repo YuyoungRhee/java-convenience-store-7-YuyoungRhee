@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import store.controller.InputHandler;
 import store.domain.Inventory;
-import store.domain.order.Order;
+import store.domain.Order;
 import store.dto.OrderRequestDto;
 
 public class OrderFactoryService {
