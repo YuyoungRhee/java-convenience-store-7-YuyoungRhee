@@ -2,23 +2,20 @@ package store.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import store.domain.Inventory;
-import store.domain.order.Order;
+import store.dto.OrderRequestDto;
 import store.view.InputView;
 
 public class InputHandler {
     private final InputView inputView;
-    private final Inventory inventory;
 
-    public InputHandler(InputView inputView, Inventory inventory) {
+    public InputHandler(InputView inputView) {
         this.inputView = inputView;
-        this.inventory = inventory;
     }
 
-    public List<Order> getOrders() {
+    public List<OrderRequestDto> getOrderRequests() {
         String orderInput = inputView.readOrders();
         //검증로직 추가 필요 예외처리도
-        List<Order> orders = new ArrayList<>();
+        List<OrderRequestDto> orderRequestDtos = new ArrayList<>();
         String[] orderItems = orderInput.split(",");
 
         for (String item : orderItems) {
@@ -28,10 +25,10 @@ public class InputHandler {
                 String productName = parts[0].substring(1); // 대괄호 제거
                 int quantity = Integer.parseInt(parts[1].substring(0, parts[1].length() - 1)); // 수량 추출
                 System.out.println("productName = " + productName);
-                orders.add(new Order(productName, quantity, inventory));
+                orderRequestDtos.add(new OrderRequestDto(productName, quantity));
             }
         }
-        return orders;
+        return orderRequestDtos;
     }
     public boolean askForNoPromotion(String productName, int noPromotionQuantity) {
         String prompt = String.format(

@@ -1,11 +1,10 @@
 package store;
 
-import java.util.List;
 import store.controller.InputHandler;
 import store.controller.StorageInitializer;
 import store.controller.StoreController;
 import store.domain.Inventory;
-import store.domain.order.Order;
+import store.service.OrderFactoryService;
 import store.service.OrderService;
 import store.view.InputView;
 import store.view.OutputView;
@@ -19,13 +18,12 @@ public class Application {
         StorageInitializer initializer = new StorageInitializer("products.md", "promotions.md");
         Inventory inventory = initializer.initializeStorage();
 
-        InputHandler inputHandler = new InputHandler(inputView, inventory);
+        InputHandler inputHandler = new InputHandler(inputView);
 
-        List<Order> orders = inputHandler.getOrders();
-        OrderService orderService = new OrderService(orders, inputHandler);
+        OrderFactoryService orderFactoryService = new OrderFactoryService(inventory, inputHandler);
+        OrderService orderService = new OrderService(inputHandler, orderFactoryService);
 
         StoreController controller = new StoreController(inputHandler, outputView, orderService);
-
 
         controller.run();
 

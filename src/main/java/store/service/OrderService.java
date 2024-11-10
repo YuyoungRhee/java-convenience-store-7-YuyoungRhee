@@ -10,10 +10,13 @@ import store.dto.OrderResultDto;
 public class OrderService {
     private final List<Order> orders;
     private final InputHandler inputHandler;
+    private final OrderFactoryService orderFactoryService;
 
-    public OrderService(List<Order> orders, InputHandler inputHandler) {
-        this.orders = orders;
+
+    public OrderService(InputHandler inputHandler, OrderFactoryService orderFactoryService) {
         this.inputHandler = inputHandler;
+        this.orderFactoryService = orderFactoryService;
+        this.orders = orderFactoryService.createOrders();
     }
 
     public List<OrderResultDto> processOrders() {
@@ -41,7 +44,7 @@ public class OrderService {
     private void requestAdditionalInput(OrderCheckDto orderCheckDto, Order order) {
         if (!orderCheckDto.isEnough()) {
             System.out.println("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
-            inputHandler.getOrders();
+            inputHandler.getOrderRequests();
         }
 
         if (orderCheckDto.getAvailableGiftQuantity() > 0) {
