@@ -1,27 +1,26 @@
 package store.domain.order;
 
+import store.domain.Inventory;
 import store.dto.OrderCheckDto;
 import store.dto.OrderResultDto;
 
 public class Order {
     private final String productName;
     private int purchaseQuantity;
-    private final OrderChecker orderChecker;
-    private final OrderProcessor orderProcessor;
+    private final Inventory inventory;
 
-    public Order(String productName, int purchaseQuantity, OrderChecker orderChecker, OrderProcessor orderProcessor) {
+    public Order(String productName, int purchaseQuantity, Inventory inventory) {
         this.productName = productName;
         this.purchaseQuantity = purchaseQuantity;
-        this.orderChecker = orderChecker;
-        this.orderProcessor = orderProcessor;
+        this.inventory = inventory;
     }
 
     public OrderCheckDto checkOrder() {
-        return orderChecker.checkOrder(productName, purchaseQuantity);
+        return inventory.checkInventory(productName, purchaseQuantity);
     }
 
     public OrderResultDto processOrder() {
-        return orderProcessor.processOrder(productName, purchaseQuantity);
+        return inventory.processOrder(productName, purchaseQuantity);
     }
 
     public void addAvailableGiftQuantity(int quantity) {

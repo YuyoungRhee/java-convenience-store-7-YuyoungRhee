@@ -6,7 +6,6 @@ import store.controller.StorageInitializer;
 import store.controller.StoreController;
 import store.domain.Inventory;
 import store.domain.order.Order;
-import store.domain.order.OrderFactory;
 import store.service.OrderService;
 import store.view.InputView;
 import store.view.OutputView;
@@ -20,9 +19,7 @@ public class Application {
         StorageInitializer initializer = new StorageInitializer("products.md", "promotions.md");
         Inventory inventory = initializer.initializeStorage();
 
-        OrderFactory orderFactory = new OrderFactory(inventory);
-
-        InputHandler inputHandler = new InputHandler(inputView, orderFactory);
+        InputHandler inputHandler = new InputHandler(inputView, inventory);
 
         List<Order> orders = inputHandler.getOrders();
         OrderService orderService = new OrderService(orders, inputHandler);

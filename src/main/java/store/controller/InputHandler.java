@@ -2,17 +2,17 @@ package store.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import store.domain.Inventory;
 import store.domain.order.Order;
-import store.domain.order.OrderFactory;
 import store.view.InputView;
 
 public class InputHandler {
     private final InputView inputView;
-    private final OrderFactory orderFactory;
+    private final Inventory inventory;
 
-    public InputHandler(InputView inputView, OrderFactory orderFactory) {
+    public InputHandler(InputView inputView, Inventory inventory) {
         this.inputView = inputView;
-        this.orderFactory = orderFactory;
+        this.inventory = inventory;
     }
 
     public List<Order> getOrders() {
@@ -28,7 +28,7 @@ public class InputHandler {
                 String productName = parts[0].substring(1); // 대괄호 제거
                 int quantity = Integer.parseInt(parts[1].substring(0, parts[1].length() - 1)); // 수량 추출
                 System.out.println("productName = " + productName);
-                orders.add(orderFactory.createOrder(productName, quantity));
+                orders.add(new Order(productName, quantity, inventory));
             }
         }
         return orders;
