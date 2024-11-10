@@ -7,7 +7,7 @@ public class NoPromotion extends Promotion{
     }
 
     @Override
-    public boolean isSatisfiedBy() {
+    public boolean isActive() {
         return false;
     }
 

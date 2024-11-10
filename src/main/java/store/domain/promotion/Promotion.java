@@ -13,11 +13,11 @@ public class Promotion {
         this.promotionCondition = promotionCondition;
     }
 
-    public boolean isSatisfiedBy() {
+    public boolean isActive() {
         return promotionCondition.isSatisfiedBy();
     }
     public int calculateGiftQuantity(int quantity) {
-        if (!isSatisfiedBy()) {
+        if (!isActive()) {
             return 0;
         }
 
@@ -26,7 +26,7 @@ public class Promotion {
     }
 
     public int calculateAvailableGiftQuantity(int quantity) {
-        if (!isSatisfiedBy()) {
+        if (!isActive()) {
             return 0;
         }
         int promotionUnit = purchaseQuantity + giftQuantity;
@@ -40,7 +40,7 @@ public class Promotion {
     }
 
     public int excludeDiscountQuantity(int quantity) {
-        if (!isSatisfiedBy()) {
+        if (!isActive()) {
             return quantity;
         }
 
