@@ -27,20 +27,20 @@ public class Product {
     }
 
     public int getPromotionQuantity(int requestQuantity) {
-        if(promotion.isSatisfiedBy()) {
+        if(promotion.isActive()) {
             return Math.min(requestQuantity, quantity);
         }
         return 0;
     }
 
     public int calculateDiscountedPrice(int requestQuantity) {
-        if (promotion.isSatisfiedBy()) {
-            return 0;
-        }
-        int giftQuantity = promotion.calculateGiftQuantity(requestQuantity);
-        int payableQuantity = requestQuantity - giftQuantity;
+        if (promotion.isActive()) {
+            int giftQuantity = promotion.calculateGiftQuantity(requestQuantity);
+            int payableQuantity = requestQuantity - giftQuantity;
 
-        return price * payableQuantity;
+            return price * payableQuantity;
+        }
+        return 0;
     }
 
     public int calculateGiftQuantity(int requestQuantity) {
