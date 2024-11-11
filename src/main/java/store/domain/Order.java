@@ -7,15 +7,17 @@ public class Order {
     private final String productName;
     private int purchaseQuantity;
     private final Inventory inventory;
+    private final OrderValidator orderValidator;
 
-    public Order(String productName, int purchaseQuantity, Inventory inventory) {
+    public Order(String productName, int purchaseQuantity, Inventory inventory, OrderValidator orderValidator) {
         this.productName = productName;
         this.purchaseQuantity = purchaseQuantity;
         this.inventory = inventory;
+        this.orderValidator = orderValidator;
     }
 
     public OrderCheckDto checkOrder() {
-        return inventory.checkInventory(productName, purchaseQuantity);
+        return orderValidator.checkOrder(productName, purchaseQuantity);
     }
 
     public OrderResultDto processOrder() {

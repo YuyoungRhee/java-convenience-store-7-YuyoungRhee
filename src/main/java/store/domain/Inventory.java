@@ -1,9 +1,9 @@
 package store.domain;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import store.dto.OrderCheckDto;
 import store.dto.OrderResultDto;
 
 public class Inventory {
@@ -13,42 +13,20 @@ public class Inventory {
         this.stock = new HashMap<>(initialStock);
     }
 
-    public OrderCheckDto checkInventory(String productName, int requestedQuantity) {
+    public int getAvailableStock(String productName) {
         List<Product> products = stock.get(productName);
 
         if (products == null) {
-            throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다.");
+            throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다: " + productName);
         }
 
-        int totalStock = products.stream()
+        return products.stream()
                 .mapToInt(Product::getQuantity)
                 .sum();
-        boolean isEnough = totalStock >= requestedQuantity;
+    }
 
-        int availableGiftQuantity = 0;
-        int noPromotionQuantity = 0;
-        int remainingQuantity = requestedQuantity;
-
-        int promotionQuantity = 0;
-
-        for (Product product : products) {
-            int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
-            availableGiftQuantity += product.calculateAdditionalGiftQuantity(usedQuantity);
-            noPromotionQuantity += product.excludeDiscountQuantity(usedQuantity);
-
-            promotionQuantity += product.getPromotionQuantity(remainingQuantity);
-            remainingQuantity -= usedQuantity;
-
-            if (remainingQuantity <= 0) {
-                break;
-            }
-        }
-
-        if (promotionQuantity == 0) {
-            noPromotionQuantity = 0;
-        }
-
-        return new OrderCheckDto(productName, isEnough, availableGiftQuantity, noPromotionQuantity);
+    public List<Product> getProducts(String productName) {
+        return stock.getOrDefault(productName, Collections.emptyList());
     }
 
     public OrderResultDto processOrder(String productName, int requestQuantity) {
