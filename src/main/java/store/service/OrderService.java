@@ -5,6 +5,7 @@ import java.util.List;
 import store.controller.InputHandler;
 import store.domain.Order;
 import store.dto.OrderCheckDto;
+import store.dto.OrderRequestDto;
 import store.dto.OrderResultDto;
 
 public class OrderService {
@@ -17,14 +18,22 @@ public class OrderService {
     }
 
     public List<OrderResultDto> processOrders() {
-        List<Order> orders = orderFactoryService.createOrders();
         List<OrderResultDto> orderResults = new ArrayList<>();
 
-        for (Order order : orders) {
-            OrderResultDto orderResult = checkAndProcessSingleOrder(order);
-            orderResults.add(orderResult);
+        while (true) {
+            try {
+                List<OrderRequestDto> orderRequests = inputHandler.getOrderRequests();
+                List<Order> orders = orderFactoryService.createOrders(orderRequests);
+
+                for (Order order : orders) {
+                    OrderResultDto orderResult = checkAndProcessSingleOrder(order);
+                    orderResults.add(orderResult);
+                }
+                return orderResults;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        return orderResults;
     }
 
     private OrderResultDto checkAndProcessSingleOrder(Order order) {
@@ -38,8 +47,7 @@ public class OrderService {
         OrderCheckDto orderCheckDto = order.checkOrder();
 
         if (!orderCheckDto.isEnough()) {
-            System.out.println("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
-            inputHandler.getOrderRequests();
+            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
         }
 
         handleAvailableGiftQuantity(orderCheckDto, order);

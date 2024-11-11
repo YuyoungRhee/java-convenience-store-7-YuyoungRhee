@@ -30,12 +30,10 @@ public class OutputView {
     public void printProducts(InventoryDto inventoryDto) {
         List<ProductDto> productDtos = inventoryDto.getProducts();
 
-        // 제품 이름으로 그룹화하여 일반 재고가 없는 경우에만 "재고 없음"을 추가
         Map<String, List<ProductDto>> groupedProducts = productDtos.stream()
                 .collect(Collectors.groupingBy(ProductDto::getName, LinkedHashMap::new, Collectors.toList()));
 
         groupedProducts.forEach((name, products) -> {
-            // 일반 재고가 존재하는지 확인
             boolean hasNonPromotionStock = products.stream()
                     .anyMatch(product -> product.getQuantity() > 0 && product.getPromotionName().isBlank());
 
@@ -50,12 +48,21 @@ public class OutputView {
     }
 
     private void printProductInfo(ProductDto productDto) {
-        String stockInfo = productDto.getQuantity() == 0 ? "재고 없음" : productDto.getQuantity() + "개";
+        String stockInfo = "재고 없음";
+        if (productDto.getQuantity() != 0) {
+            stockInfo = productDto.getQuantity() + "개";
+        }
+
+        String promotionName = "";
+        if (!productDto.getPromotionName().isBlank()) {
+            promotionName = productDto.getPromotionName();
+        }
+
         System.out.printf("- %s %s원 %s %s%n",
                 productDto.getName(),
                 currencyFormatter.format(productDto.getPrice()),
                 stockInfo,
-                productDto.getPromotionName().isBlank() ? "" : productDto.getPromotionName());
+                promotionName);
     }
 
 
@@ -84,7 +91,6 @@ public class OutputView {
                 receipt.getTotalPrice());
         System.out.printf("행사할인\t\t\t-%d\n", receipt.getDiscountPrice());
         System.out.printf("멤버십할인\t\t\t-%d\n", receipt.getFinalDiscountPrice());
-        System.out.printf("내실돈\t\t\t%,d\n", receipt.getFinalAmount());
-        System.out.println();
+        System.out.printf("내실돈\t\t\t%,d", receipt.getFinalAmount());
     }
 }
