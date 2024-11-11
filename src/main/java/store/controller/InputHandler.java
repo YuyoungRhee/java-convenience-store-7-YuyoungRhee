@@ -46,7 +46,7 @@ public class InputHandler {
                 productName, noPromotionQuantity
         );
         String input = inputView.readAnswerForNoPromotion(prompt);
-        //검증로직
+        InputValidator.validateYesOrNo(input);
 
         return input.equals("Y");
 
@@ -57,21 +57,21 @@ public class InputHandler {
                 productName, additionalGift
         );
         String input = inputView.readAnswerForAdditionalGift(prompt);
-        //검증로직
+        InputValidator.validateYesOrNo(input);
 
         return input.equals("Y");
     }
 
     public boolean askApplyDiscount() {
         String input = inputView.readAnswerForApplyDiscount();
-        //검증 로직
+        InputValidator.validateYesOrNo(input);
 
         return input.equals("Y");
     }
 
     public boolean askForAdditionalPurchase() {
         String input = inputView.readAnswerForAdditionalPurchase();
-        //검증 로직
+        InputValidator.validateYesOrNo(input);
 
         return input.equals("Y");
     }

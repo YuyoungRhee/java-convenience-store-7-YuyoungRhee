@@ -17,6 +17,13 @@ public class InputValidator {
         }
     }
 
+    public static void validateYesOrNo(String input) {
+        validateNullOrBlank(input);
+        if (!input.equalsIgnoreCase("Y") && !input.equalsIgnoreCase("N")) {
+            throw new IllegalArgumentException("[ERROR] Y 또는 N을 정확히 입력해주세요.");
+        }
+    }
+
     private static void validateNullOrBlank(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw new IllegalArgumentException("[ERROR] 입력값이 비어 있습니다. 올바르게 입력해 주세요.");
