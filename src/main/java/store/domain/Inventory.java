@@ -25,6 +25,7 @@ public class Inventory {
                 .sum();
     }
 
+    //getter
     public List<Product> getProducts(String productName) {
         return stock.getOrDefault(productName, Collections.emptyList());
     }
@@ -32,26 +33,65 @@ public class Inventory {
     public OrderResultDto processOrder(String productName, int requestQuantity) {
         List<Product> products = stock.get(productName);
 
+        int giftQuantity = calculateGiftQuantity(products, requestQuantity);
+        int totalPrice = calculateTotalPrice(products, requestQuantity);
+        int promotionDiscountedPrice = calculatePromotionDiscount(products, requestQuantity);
+        reduceProductQuantity(products, requestQuantity);
+
+        return new OrderResultDto(productName, requestQuantity, giftQuantity, totalPrice, promotionDiscountedPrice);
+    }
+
+    private int calculateGiftQuantity(List<Product> products, int requestQuantity) {
         int giftQuantity = 0;
+        int remainingQuantity = requestQuantity;
+
+        for (Product product : products) {
+            int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
+            giftQuantity += product.calculateGiftQuantity(usedQuantity);
+            remainingQuantity -= usedQuantity;
+            if (remainingQuantity <= 0) break;
+        }
+
+        return giftQuantity;
+    }
+
+    private int calculateTotalPrice(List<Product> products, int requestQuantity) {
         int totalPrice = 0;
+        int remainingQuantity = requestQuantity;
+
+        for (Product product : products) {
+            int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
+            totalPrice += product.calculateTotalPrice(usedQuantity);
+            remainingQuantity -= usedQuantity;
+            if (remainingQuantity <= 0) break;
+        }
+
+        return totalPrice;
+    }
+
+    private int calculatePromotionDiscount(List<Product> products, int requestQuantity) {
         int promotionDiscountedPrice = 0;
         int remainingQuantity = requestQuantity;
 
         for (Product product : products) {
             int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
-
-            giftQuantity += product.calculateGiftQuantity(usedQuantity);
-            totalPrice += product.calculateTotalPrice(usedQuantity);
             promotionDiscountedPrice += product.calculateDiscountedPrice(usedQuantity);
             remainingQuantity -= usedQuantity;
-
-            product.reduceQuantity(usedQuantity);
-
-            if (remainingQuantity <= 0) {
-                break;
-            }
+            if (remainingQuantity <= 0) break;
         }
-        return new OrderResultDto(productName, requestQuantity, giftQuantity, totalPrice, promotionDiscountedPrice);
+
+        return promotionDiscountedPrice;
+    }
+
+    private void reduceProductQuantity(List<Product> products, int requestQuantity) {
+        int remainingQuantity = requestQuantity;
+
+        for (Product product : products) {
+            int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
+            product.reduceQuantity(usedQuantity);
+            remainingQuantity -= usedQuantity;
+            if (remainingQuantity <= 0) break;
+        }
     }
 
 }
