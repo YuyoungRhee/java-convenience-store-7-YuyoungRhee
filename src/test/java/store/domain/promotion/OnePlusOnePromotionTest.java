@@ -71,7 +71,7 @@ class OnePlusOnePromotionTest {
     })
     void excludeDiscountQuantity(int quantity, int expected) {
         // when
-        int excluded = promotion.excludeDiscountQuantity(quantity);
+        int excluded = promotion.getNonDiscountableQuantity(quantity);
 
         // then
         Assertions.assertThat(excluded).isEqualTo(expected);

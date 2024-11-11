@@ -27,10 +27,11 @@ public class Promotion {
         return (quantity / promotionUnit) * giftQuantity;
     }
 
-    public int calculateAvailableGiftQuantity(int quantity) {
+    public int calculateAdditionalGiftQuantity(int quantity) {
         if (!isActive()) {
             return 0;
         }
+
         int promotionUnit = purchaseQuantity + giftQuantity;
         int additionalQuantityNeeded = promotionUnit - (quantity % promotionUnit);
 
@@ -41,7 +42,7 @@ public class Promotion {
 
     }
 
-    public int excludeDiscountQuantity(int quantity) {
+    public int getNonDiscountableQuantity(int quantity) {
         if (!isActive()) {
             return quantity;
         }

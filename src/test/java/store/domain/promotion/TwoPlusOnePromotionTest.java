@@ -2,13 +2,11 @@ package store.domain.promotion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import store.domain.Product;
 import store.domain.promotionCondition.PromotionCondition;
 
 class TwoPlusOnePromotionTest {
@@ -68,7 +66,7 @@ class TwoPlusOnePromotionTest {
     })
     void calculateAvailableGiftQuantity(int quantity, int expected) {
         // when
-        int additionalGift = promotion.calculateAvailableGiftQuantity(quantity);
+        int additionalGift = promotion.calculateAdditionalGiftQuantity(quantity);
 
         // then
         assertThat(additionalGift).isEqualTo(expected);
@@ -85,7 +83,7 @@ class TwoPlusOnePromotionTest {
     })
     void excludeDiscountQuantity(int quantity, int expected) {
         // when
-        int excluded = promotion.excludeDiscountQuantity(quantity);
+        int excluded = promotion.getNonDiscountableQuantity(quantity);
 
         // then
         Assertions.assertThat(excluded).isEqualTo(expected);

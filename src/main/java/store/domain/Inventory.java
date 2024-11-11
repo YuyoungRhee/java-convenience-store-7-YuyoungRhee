@@ -29,9 +29,15 @@ public class Inventory {
                 .sum();
     }
 
-    //getter
-    public List<Product> getProducts(String productName) {
-        return stock.getOrDefault(productName, Collections.emptyList());
+    public OrderResultDto processOrder(String productName, int requestQuantity) {
+        List<Product> products = stock.get(productName);
+
+        int giftQuantity = calculateGiftQuantity(products, requestQuantity);
+        int totalPrice = calculateTotalPrice(products, requestQuantity);
+        int promotionDiscountedPrice = calculatePromotionDiscount(products, requestQuantity);
+        reduceProductQuantity(products, requestQuantity);
+
+        return new OrderResultDto(productName, requestQuantity, giftQuantity, totalPrice, promotionDiscountedPrice);
     }
 
     public InventoryDto toDto() {
@@ -47,15 +53,9 @@ public class Inventory {
         return new InventoryDto(productDtos);
     }
 
-    public OrderResultDto processOrder(String productName, int requestQuantity) {
-        List<Product> products = stock.get(productName);
-
-        int giftQuantity = calculateGiftQuantity(products, requestQuantity);
-        int totalPrice = calculateTotalPrice(products, requestQuantity);
-        int promotionDiscountedPrice = calculatePromotionDiscount(products, requestQuantity);
-        reduceProductQuantity(products, requestQuantity);
-
-        return new OrderResultDto(productName, requestQuantity, giftQuantity, totalPrice, promotionDiscountedPrice);
+    //getter
+    public List<Product> getProducts(String productName) {
+        return stock.getOrDefault(productName, Collections.emptyList());
     }
 
     private int calculateGiftQuantity(List<Product> products, int requestQuantity) {

@@ -29,7 +29,7 @@ public class Product {
     public int getPromotionQuantity(int requestQuantity) {
         if(promotion.isActive()) {
             int usedQuantity = Math.min(requestQuantity, quantity);
-            return usedQuantity - promotion.excludeDiscountQuantity(usedQuantity);
+            return usedQuantity - promotion.getNonDiscountableQuantity(usedQuantity);
         }
         return 0;
     }
@@ -48,11 +48,11 @@ public class Product {
     }
 
     public int calculateAdditionalGiftQuantity(int requestedQuantity) {
-        return promotion.calculateAvailableGiftQuantity(requestedQuantity);
+        return promotion.calculateAdditionalGiftQuantity(requestedQuantity);
     }
 
     public int excludeDiscountQuantity(int requestedQuantity) {
-        return promotion.excludeDiscountQuantity(requestedQuantity);
+        return promotion.getNonDiscountableQuantity(requestedQuantity);
     }
 
     public int getQuantity() {
