@@ -20,7 +20,7 @@ class OnePlusOnePromotionTest {
                 return true;
             }
         };
-        promotion = new Promotion(1,1, promotionCondition);
+        promotion = new Promotion("1+1프로모션", 1,1, promotionCondition);
     }
 
 

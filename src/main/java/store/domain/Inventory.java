@@ -2,15 +2,19 @@ package store.domain;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import store.dto.InventoryDto;
 import store.dto.OrderResultDto;
+import store.dto.ProductDto;
 
 public class Inventory {
     private final Map<String, List<Product>> stock;
 
     public Inventory(Map<String, List<Product>> initialStock) {
-        this.stock = new HashMap<>(initialStock);
+        this.stock = new LinkedHashMap<>(initialStock);
     }
 
     public int getAvailableStock(String productName) {
@@ -28,6 +32,19 @@ public class Inventory {
     //getter
     public List<Product> getProducts(String productName) {
         return stock.getOrDefault(productName, Collections.emptyList());
+    }
+
+    public InventoryDto toDto() {
+        List<ProductDto> productDtos = stock.values().stream()
+                .flatMap(List::stream)
+                .map(product -> new ProductDto(
+                        product.getName(),
+                        product.getPrice(),
+                        product.getQuantity(),
+                        product.getPromotion().getPromotionName()))
+                .collect(Collectors.toList());
+
+        return new InventoryDto(productDtos);
     }
 
     public OrderResultDto processOrder(String productName, int requestQuantity) {

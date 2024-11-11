@@ -8,16 +8,18 @@ import store.dto.OrderCheckDto;
 import store.dto.OrderResultDto;
 
 public class OrderService {
-    private final List<Order> orders;
     private final InputHandler inputHandler;
+    private final OrderFactoryService orderFactoryService;
 
     public OrderService(InputHandler inputHandler, OrderFactoryService orderFactoryService) {
         this.inputHandler = inputHandler;
-        this.orders = orderFactoryService.createOrders();
+        this.orderFactoryService = orderFactoryService;
     }
 
     public List<OrderResultDto> processOrders() {
+        List<Order> orders = orderFactoryService.createOrders();
         List<OrderResultDto> orderResults = new ArrayList<>();
+
         for (Order order : orders) {
             OrderResultDto orderResult = checkAndProcessSingleOrder(order);
             orderResults.add(orderResult);
@@ -26,7 +28,7 @@ public class OrderService {
     }
 
     private OrderResultDto checkAndProcessSingleOrder(Order order) {
-        while (!order.checkOrder().canProceedOrder()) {
+        while (!order.canProceedOrder()) {
             requestAdditionalInput(order);
         }
         return order.processOrder();
@@ -58,9 +60,11 @@ public class OrderService {
         if (orderCheckDto.getNoPromotionQuantity() > 0) {
             boolean confirmRegularPrice = inputHandler.askForNoPromotion(orderCheckDto.getProductName(),
                     orderCheckDto.getNoPromotionQuantity());
-            if (confirmRegularPrice) {
+
+            if (!confirmRegularPrice) {
                 order.excludeNoPromotionQuantity(orderCheckDto.getNoPromotionQuantity());
             }
+            order.confirmNoPromotion();
         }
     }
 }

@@ -8,6 +8,7 @@ public class Order {
     private int purchaseQuantity;
     private final Inventory inventory;
     private final OrderValidator orderValidator;
+    private boolean isConfirmedNoPromotion = false;
 
     public Order(String productName, int purchaseQuantity, Inventory inventory, OrderValidator orderValidator) {
         this.productName = productName;
@@ -30,6 +31,15 @@ public class Order {
 
     public void excludeNoPromotionQuantity(int quantity) {
         purchaseQuantity -= quantity;
+    }
+
+    public void confirmNoPromotion() {
+        this.isConfirmedNoPromotion = true;
+    }
+
+    public boolean canProceedOrder() {
+        OrderCheckDto orderCheckDto = checkOrder();
+        return isConfirmedNoPromotion || (orderCheckDto.isEnough() && orderCheckDto.getAvailableGiftQuantity() == 0 && orderCheckDto.getNoPromotionQuantity() == 0);
     }
 
 }

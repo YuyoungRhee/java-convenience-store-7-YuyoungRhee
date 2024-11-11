@@ -1,6 +1,7 @@
 package store.controller;
 
 import java.util.List;
+import store.domain.Inventory;
 import store.dto.OrderResultDto;
 import store.dto.Receipt;
 import store.domain.Seller;
@@ -14,12 +15,15 @@ public class StoreController {
     private final InputHandler inputHandler;
     private final OutputView outputView;
     private final OrderService orderService;
+    private final Inventory inventory;
 
-    public StoreController(InputHandler inputHandler, OutputView outputView, OrderService orderService) {
+    public StoreController(InputHandler inputHandler, OutputView outputView, Inventory inventory, OrderService orderService) {
         this.outputView = outputView;
         this.inputHandler = inputHandler;
         this.orderService = orderService;
+        this.inventory = inventory;
         this.seller = initializeSeller();
+
     }
 
     public void run() {
@@ -37,7 +41,8 @@ public class StoreController {
 
     private void displayStartMessage() {
         outputView.printWelcomeMessage();
-        outputView.printProductsFromFile("products.md");
+        outputView.printProducts(inventory.toDto());
+        System.out.flush();
     }
 
     private boolean wantMorePurchase() {

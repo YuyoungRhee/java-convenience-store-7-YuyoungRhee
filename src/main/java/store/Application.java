@@ -23,7 +23,7 @@ public class Application {
         OrderFactoryService orderFactoryService = new OrderFactoryService(inventory, inputHandler);
         OrderService orderService = new OrderService(inputHandler, orderFactoryService);
 
-        StoreController controller = new StoreController(inputHandler, outputView, orderService);
+        StoreController controller = new StoreController(inputHandler, outputView, inventory, orderService);
 
         controller.run();
 

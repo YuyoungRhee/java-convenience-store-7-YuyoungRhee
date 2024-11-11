@@ -3,11 +3,13 @@ package store.domain.promotion;
 import store.domain.promotionCondition.PromotionCondition;
 
 public class Promotion {
+    private final String promotionName;
     private final int purchaseQuantity;
     private final int giftQuantity;
     private final PromotionCondition promotionCondition;
 
-    public Promotion(int purchaseQuantity, int giftQuantity, PromotionCondition promotionCondition) {
+    public Promotion(String promotionName, int purchaseQuantity, int giftQuantity, PromotionCondition promotionCondition) {
+        this.promotionName = promotionName;
         this.purchaseQuantity = purchaseQuantity;
         this.giftQuantity = giftQuantity;
         this.promotionCondition = promotionCondition;
@@ -46,6 +48,10 @@ public class Promotion {
 
         int promotionUnit = purchaseQuantity + giftQuantity;
         return quantity % promotionUnit;
+    }
+
+    public String getPromotionName() {
+        return promotionName;
     }
 
 }

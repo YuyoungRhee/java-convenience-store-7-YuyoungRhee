@@ -1,7 +1,6 @@
 package store.dto;
 
 public class OrderCheckDto {
-    private final boolean canProceedOrder;
     private final String productName;
     private final int availableGiftQuantity;
     private final boolean isEnough;
@@ -12,15 +11,10 @@ public class OrderCheckDto {
         this.isEnough = isEnough;
         this.availableGiftQuantity = availableGiftQuantity;
         this.noPromotionQuantity = noPromotionQuantity;
-        this.canProceedOrder = calculateOrderProceed();
-    }
-
-    private boolean calculateOrderProceed() {
-        return isEnough && availableGiftQuantity == 0 && noPromotionQuantity == 0;
     }
 
     public boolean canProceedOrder() {
-        return canProceedOrder;
+        return isEnough && availableGiftQuantity == 0 && noPromotionQuantity == 0;
     }
 
     public String getProductName() {

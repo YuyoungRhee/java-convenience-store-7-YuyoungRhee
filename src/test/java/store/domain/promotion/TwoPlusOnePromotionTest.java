@@ -17,7 +17,7 @@ class TwoPlusOnePromotionTest {
     @BeforeEach
     void setUp() {
         PromotionCondition promotionCondition = () -> true;
-        promotion = new Promotion(2,1, promotionCondition);
+        promotion = new Promotion("2+1프로모션",2,1, promotionCondition);
     }
 
     @DisplayName("2+1에 맞춰 증정품 개수를 계산한다.")

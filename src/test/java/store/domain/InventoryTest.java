@@ -21,7 +21,7 @@ class InventoryTest {
     @BeforeEach
     void setUp() {
         PromotionCondition promotionCondition = () -> true;
-        Product promotionProduct = new Product("콜라", 1000, 10, new Promotion(1,1,promotionCondition));
+        Product promotionProduct = new Product("콜라", 1000, 10, new Promotion("1+1프로모",1,1,promotionCondition));
         Product generalProduct = new Product("콜라", 1000, 10, new NoPromotion());
         List<Product> products = List.of(promotionProduct, generalProduct);
 

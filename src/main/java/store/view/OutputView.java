@@ -7,82 +7,57 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import store.domain.Inventory;
+import store.dto.InventoryDto;
 import store.dto.OrderResultDto;
+import store.dto.ProductDto;
 import store.dto.Receipt;
 
 public class OutputView {
+    private final NumberFormat currencyFormatter = NumberFormat.getNumberInstance(Locale.KOREA);
+
     public void printWelcomeMessage() {
         System.out.println("안녕하세요. W편의점입니다.");
         System.out.println("현재 보유하고 있는 상품입니다.");
         System.out.println();
     }
 
-    public void printProductsFromFile(String filePath) {
-        Map<String, List<String>> productMap = loadProductsFromFile(filePath);
-        printProductInventory(productMap);
-    }
+    public void printProducts(InventoryDto inventoryDto) {
+        List<ProductDto> productDtos = inventoryDto.getProducts();
 
-    private Map<String, List<String>> loadProductsFromFile(String filePath) {
-        ClassLoader classLoader = getClass().getClassLoader();
-        Map<String, List<String>> productMap = new HashMap<>();
+        // 제품 이름으로 그룹화하여 일반 재고가 없는 경우에만 "재고 없음"을 추가
+        Map<String, List<ProductDto>> groupedProducts = productDtos.stream()
+                .collect(Collectors.groupingBy(ProductDto::getName, LinkedHashMap::new, Collectors.toList()));
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(classLoader.getResource(filePath).getFile()))) {
-            reader.readLine(); // 헤더 건너뛰기
-            String line;
+        groupedProducts.forEach((name, products) -> {
+            // 일반 재고가 존재하는지 확인
+            boolean hasNonPromotionStock = products.stream()
+                    .anyMatch(product -> product.getQuantity() > 0 && product.getPromotionName().isBlank());
 
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                String productInfo = formatProductInfo(parts);
-                productMap.computeIfAbsent(parts[0].trim(), k -> new ArrayList<>()).add(productInfo);
+            products.forEach(this::printProductInfo);
+
+            // 일반 재고가 없는 경우 "재고 없음" 출력
+            if (!hasNonPromotionStock) {
+                ProductDto firstProduct = products.get(0); // 해당 제품의 기본 정보를 사용
+                System.out.printf("- %s %s원 재고 없음%n", firstProduct.getName(), currencyFormatter.format(firstProduct.getPrice()));
             }
-        } catch (IOException | NullPointerException e) {
-            System.out.println("[ERROR] 파일을 읽는 중 오류가 발생했습니다.");
-        }
-
-        return productMap;
+        });
     }
 
-    private String formatProductInfo(String[] parts) {
-        String name = parts[0].trim();
-        int priceValue = Integer.parseInt(parts[1].trim());
-        String price = NumberFormat.getNumberInstance(Locale.KOREA).format(priceValue) + "원";
-
-        String quantity = "재고 없음";
-        if (!parts[2].trim().equals("0")) {
-            quantity = parts[2].trim() + "개";
-        }
-
-        String promotion = "";
-        if (!parts[3].trim().equals("null")) {
-            promotion = parts[3].trim();
-        }
-
-        return String.format("- %s %s %s %s", name, price, quantity, promotion);
+    private void printProductInfo(ProductDto productDto) {
+        String stockInfo = productDto.getQuantity() == 0 ? "재고 없음" : productDto.getQuantity() + "개";
+        System.out.printf("- %s %s원 %s %s%n",
+                productDto.getName(),
+                currencyFormatter.format(productDto.getPrice()),
+                stockInfo,
+                productDto.getPromotionName().isBlank() ? "" : productDto.getPromotionName());
     }
 
-    private void printProductInventory(Map<String, List<String>> productMap) {
-        addNoStockEntries(productMap);
-        productMap.values().forEach(stocks -> stocks.forEach(System.out::println));
-        System.out.println();
-    }
-
-    private void addNoStockEntries(Map<String, List<String>> productMap) {
-        for (Map.Entry<String, List<String>> entry : productMap.entrySet()) {
-            List<String> stocks = entry.getValue();
-            boolean hasGeneralStock = stocks.stream()
-                    .anyMatch(s -> !s.contains("재고 없음") && s.split(" ").length == 4);
-
-            if (!hasGeneralStock) {
-                String[] firstProduct = stocks.get(0).split(" ");
-                String name = firstProduct[1];
-                String price = firstProduct[2];
-                stocks.add(String.format("- %s %s 재고 없음", name, price));
-            }
-        }
-    }
 
     public void printReceipt(Receipt receipt) {
         System.out.println();

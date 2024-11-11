@@ -13,23 +13,33 @@ public class InputHandler {
     }
 
     public List<OrderRequestDto> getOrderRequests() {
-        String orderInput = inputView.readOrders();
-        //검증로직 추가 필요 예외처리도
+        while (true) {
+            try {
+                String orderInput = inputView.readOrders();
+                InputValidator.validateOrderInput(orderInput);
+                List<OrderRequestDto> orderRequestDtos = parseOrderInput(orderInput);
+                InputValidator.validateOrderItems(orderRequestDtos);
+                return orderRequestDtos;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private List<OrderRequestDto> parseOrderInput(String orderInput) {
         List<OrderRequestDto> orderRequestDtos = new ArrayList<>();
         String[] orderItems = orderInput.split(",");
 
         for (String item : orderItems) {
             item = item.trim();
-            String[] parts = item.split("-");
-            if (parts.length == 2) {
-                String productName = parts[0].substring(1); // 대괄호 제거
-                int quantity = Integer.parseInt(parts[1].substring(0, parts[1].length() - 1)); // 수량 추출
-                System.out.println("productName = " + productName);
-                orderRequestDtos.add(new OrderRequestDto(productName, quantity));
-            }
+            String[] parts = item.substring(1, item.length() - 1).split("-");
+            String productName = parts[0].trim();
+            int quantity = Integer.parseInt(parts[1].trim());
+            orderRequestDtos.add(new OrderRequestDto(productName, quantity));
         }
         return orderRequestDtos;
     }
+
     public boolean askForNoPromotion(String productName, int noPromotionQuantity) {
         String prompt = String.format(
                 "현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)",

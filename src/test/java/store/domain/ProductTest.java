@@ -17,7 +17,7 @@ class ProductTest {
         int requiredQuantity = 1;
         PromotionCondition promotionCondition = () -> true;
 
-        Promotion promotion = new Promotion(1,1, promotionCondition);
+        Promotion promotion = new Promotion("1+1프로모션", 1,1, promotionCondition);
         Product product = new Product("Test product", 1000, stockQuantity, promotion);
 
         // when
@@ -35,7 +35,7 @@ class ProductTest {
         int requiredQuantity = 10;
         PromotionCondition promotionCondition = () -> true;
 
-        Promotion promotion = new Promotion(1,1, promotionCondition);
+        Promotion promotion = new Promotion("1+1프로모션", 1,1, promotionCondition);
         Product product = new Product("Test product", 1000, stockQuantity, promotion);
 
         // when

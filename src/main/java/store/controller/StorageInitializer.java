@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class StorageInitializer {
     }
 
     private Map<String, List<Product>> loadProductMap(Map<String, Promotion> promotions) throws IOException {
-        Map<String, List<Product>> productMap = new HashMap<>();
+        Map<String, List<Product>> productMap = new LinkedHashMap<>();
 
         try (BufferedReader reader = getBufferedReader(productsFilePath)) {
             reader.readLine(); // 헤더 건너뛰기
@@ -59,7 +60,7 @@ public class StorageInitializer {
     private void processProductLine(String line, Map<String, List<Product>> productMap, Map<String, Promotion> promotions) throws IOException {
         String[] parts = line.split(",");
         if (parts.length < 4) {
-            throw new IOException();
+            throw new IOException(ERROR_INVALID_DATA_FORMAT + line);
         }
 
         String name = parts[0].trim();
@@ -70,7 +71,13 @@ public class StorageInitializer {
         Promotion promotion = (promotionName == null) ? new NoPromotion() : promotions.getOrDefault(promotionName, new NoPromotion());
         Product product = new Product(name, price, quantity, promotion);
 
-        productMap.computeIfAbsent(name, k -> new ArrayList<>()).add(product);
+        List<Product> products = productMap.computeIfAbsent(name, k -> new ArrayList<>());
+
+        if (promotion instanceof NoPromotion) {
+            products.add(product);
+        } else {
+            products.add(0, product);
+        }
     }
 
     private Map<String, Promotion> initializePromotions() throws IOException {
@@ -91,14 +98,14 @@ public class StorageInitializer {
         String[] parts = line.split(",");
         validatePromotionData(parts, line);
 
-        String name = parts[0].trim();
+        String promotionName = parts[0].trim();
         int purchaseQuantity = Integer.parseInt(parts[1].trim());
         int giftQuantity = Integer.parseInt(parts[2].trim());
         LocalDate startDate = parseDate(parts[3].trim(), line);
         LocalDate endDate = parseDate(parts[4].trim(), line);
 
         PromotionCondition periodCondition = new PeriodCondition(startDate, endDate);
-        promotions.put(name, new Promotion(purchaseQuantity, giftQuantity, periodCondition));
+        promotions.put(promotionName, new Promotion(promotionName, purchaseQuantity, giftQuantity, periodCondition));
     }
 
     private void validatePromotionData(String[] parts, String line) throws IOException {

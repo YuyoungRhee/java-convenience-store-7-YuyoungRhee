@@ -51,16 +51,21 @@ public class OrderValidator {
     }
 
     private int calculateNoPromotionQuantity(String productName, int requestedQuantity, int promotionQuantity) {
+        if (requestedQuantity <= promotionQuantity) {
+            return 0;
+        }
+
         int noPromotionQuantity = 0;
+        int remainingQuantity = requestedQuantity;
 
         for (Product product : inventory.getProducts(productName)) {
             int applicableQuantity = Math.min(requestedQuantity, product.getQuantity());
             noPromotionQuantity += product.excludeDiscountQuantity(applicableQuantity);
-            requestedQuantity -= applicableQuantity;
+            remainingQuantity -= applicableQuantity;
 
-            if (requestedQuantity <= 0) break;
+            if (remainingQuantity <= 0) break;
         }
 
-        return noPromotionQuantity;
+        return requestedQuantity - promotionQuantity;
     }
 }
