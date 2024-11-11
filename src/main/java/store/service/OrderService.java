@@ -10,12 +10,9 @@ import store.dto.OrderResultDto;
 public class OrderService {
     private final List<Order> orders;
     private final InputHandler inputHandler;
-    private final OrderFactoryService orderFactoryService;
-
 
     public OrderService(InputHandler inputHandler, OrderFactoryService orderFactoryService) {
         this.inputHandler = inputHandler;
-        this.orderFactoryService = orderFactoryService;
         this.orders = orderFactoryService.createOrders();
     }
 
@@ -29,24 +26,25 @@ public class OrderService {
     }
 
     private OrderResultDto checkAndProcessSingleOrder(Order order) {
-        while(true) {
-            OrderCheckDto orderCheckDto = order.checkOrder();
-
-            if (orderCheckDto.canProceedOrder()) {
-                break;
-            }
-
-            requestAdditionalInput(orderCheckDto, order);
+        while (!order.checkOrder().canProceedOrder()) {
+            requestAdditionalInput(order);
         }
         return order.processOrder();
     }
 
-    private void requestAdditionalInput(OrderCheckDto orderCheckDto, Order order) {
+    private void requestAdditionalInput(Order order) {
+        OrderCheckDto orderCheckDto = order.checkOrder();
+
         if (!orderCheckDto.isEnough()) {
             System.out.println("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
             inputHandler.getOrderRequests();
         }
 
+        handleAvailableGiftQuantity(orderCheckDto, order);
+        handleNoPromotionQuantity(orderCheckDto, order);
+    }
+
+    private void handleAvailableGiftQuantity(OrderCheckDto orderCheckDto, Order order) {
         if (orderCheckDto.getAvailableGiftQuantity() > 0) {
             boolean addGift = inputHandler.askForAdditionalGift(orderCheckDto.getProductName(),
                     orderCheckDto.getAvailableGiftQuantity());
@@ -54,7 +52,9 @@ public class OrderService {
                 order.addAvailableGiftQuantity(orderCheckDto.getAvailableGiftQuantity());
             }
         }
+    }
 
+    private void handleNoPromotionQuantity(OrderCheckDto orderCheckDto, Order order) {
         if (orderCheckDto.getNoPromotionQuantity() > 0) {
             boolean confirmRegularPrice = inputHandler.askForNoPromotion(orderCheckDto.getProductName(),
                     orderCheckDto.getNoPromotionQuantity());

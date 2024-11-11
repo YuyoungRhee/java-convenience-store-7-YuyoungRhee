@@ -23,22 +23,25 @@ public class StoreController {
     }
 
     public void run() {
-        while (true) {
-            outputView.printWelcomeMessage();
-            outputView.printProductsFromFile("products.md");
+        do {
+            displayStartMessage();
 
             List<OrderResultDto> orderResults = orderService.processOrders();
 
             boolean applyDiscount = inputHandler.askApplyDiscount();
             Receipt receipt = seller.processPayment(orderResults, applyDiscount);
-
             outputView.printReceipt(receipt);
-            boolean wantMorePurchase = inputHandler.askForAdditionalPurchase();
-            if (!wantMorePurchase) {
-                break;
-            }
-        }
 
+        } while (wantMorePurchase());
+    }
+
+    private void displayStartMessage() {
+        outputView.printWelcomeMessage();
+        outputView.printProductsFromFile("products.md");
+    }
+
+    private boolean wantMorePurchase() {
+        return inputHandler.askForAdditionalPurchase();
     }
 
     private Seller initializeSeller() {

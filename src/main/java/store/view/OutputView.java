@@ -21,54 +21,67 @@ public class OutputView {
     }
 
     public void printProductsFromFile(String filePath) {
+        Map<String, List<String>> productMap = loadProductsFromFile(filePath);
+        printProductInventory(productMap);
+    }
+
+    private Map<String, List<String>> loadProductsFromFile(String filePath) {
         ClassLoader classLoader = getClass().getClassLoader();
         Map<String, List<String>> productMap = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(classLoader.getResource(filePath).getFile()))) {
-            String line;
             reader.readLine(); // 헤더 건너뛰기
+            String line;
 
-            // 1. 모든 상품을 읽어 productMap에 저장
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                String name = parts[0].trim();
-                int priceValue = Integer.parseInt(parts[1].trim());
-                String price = NumberFormat.getNumberInstance(Locale.KOREA).format(priceValue) + "원";
-
-                String quantity;
-                String promotion = parts[3].trim().equals("null") ? "" : parts[3].trim();
-
-                if (parts[2].trim().equals("0")) {
-                    quantity = "재고 없음";
-                } else {
-                    quantity = parts[2].trim() + "개";
-                }
-
-                String productInfo = String.format("- %s %s %s %s", name, price, quantity, promotion);
-                productMap.computeIfAbsent(name, k -> new ArrayList<>()).add(productInfo);
+                String productInfo = formatProductInfo(parts);
+                productMap.computeIfAbsent(parts[0].trim(), k -> new ArrayList<>()).add(productInfo);
             }
-
-            // 2. 일반 재고가 없는 경우 재고 없음으로 표시
-            for (Map.Entry<String, List<String>> entry : productMap.entrySet()) {
-                List<String> stocks = entry.getValue();
-                boolean hasGeneralStock = stocks.stream().anyMatch(s -> !s.contains("재고 없음") && s.split(" ").length == 4);
-
-                // 일반 재고가 없으면 "재고 없음" 항목 추가
-                if (!hasGeneralStock) {
-                    String[] firstProduct = stocks.get(0).split(" ");
-                    String name = firstProduct[1];
-                    String price = firstProduct[2];
-                    stocks.add(String.format("- %s %s 재고 없음", name, price));
-                }
-
-                // 상품 정보 출력
-                stocks.forEach(System.out::println);
-            }
-
         } catch (IOException | NullPointerException e) {
             System.out.println("[ERROR] 파일을 읽는 중 오류가 발생했습니다.");
         }
+
+        return productMap;
+    }
+
+    private String formatProductInfo(String[] parts) {
+        String name = parts[0].trim();
+        int priceValue = Integer.parseInt(parts[1].trim());
+        String price = NumberFormat.getNumberInstance(Locale.KOREA).format(priceValue) + "원";
+
+        String quantity = "재고 없음";
+        if (!parts[2].trim().equals("0")) {
+            quantity = parts[2].trim() + "개";
+        }
+
+        String promotion = "";
+        if (!parts[3].trim().equals("null")) {
+            promotion = parts[3].trim();
+        }
+
+        return String.format("- %s %s %s %s", name, price, quantity, promotion);
+    }
+
+    private void printProductInventory(Map<String, List<String>> productMap) {
+        addNoStockEntries(productMap);
+        productMap.values().forEach(stocks -> stocks.forEach(System.out::println));
         System.out.println();
+    }
+
+    private void addNoStockEntries(Map<String, List<String>> productMap) {
+        for (Map.Entry<String, List<String>> entry : productMap.entrySet()) {
+            List<String> stocks = entry.getValue();
+            boolean hasGeneralStock = stocks.stream()
+                    .anyMatch(s -> !s.contains("재고 없음") && s.split(" ").length == 4);
+
+            if (!hasGeneralStock) {
+                String[] firstProduct = stocks.get(0).split(" ");
+                String name = firstProduct[1];
+                String price = firstProduct[2];
+                stocks.add(String.format("- %s %s 재고 없음", name, price));
+            }
+        }
     }
 
     public void printReceipt(Receipt receipt) {
