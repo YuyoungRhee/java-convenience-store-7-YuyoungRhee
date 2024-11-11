@@ -13,21 +13,28 @@ public class Seller {
     }
 
     public Receipt processPayment(List<OrderResultDto> orderResults, boolean applyDiscount) {
-
-        int totalPrice = orderResults.stream()
-                .mapToInt(OrderResultDto::getTotalPrice)
-                .sum();
-
-        int discountPrice = orderResults.stream()
-                .mapToInt(OrderResultDto::getDiscountedPrice)
-                .sum();
+        int totalPrice = calculateTotalPrice(orderResults);
+        int discountPrice = calculateTotalDiscount(orderResults);
 
         int finalDiscountPrice = 0;
         if (applyDiscount) {
             finalDiscountPrice = discountPolicy.applyDiscount(totalPrice - discountPrice);
         }
+
         int finalAmount = totalPrice - discountPrice - finalDiscountPrice;
 
         return new Receipt(totalPrice, discountPrice, finalDiscountPrice, finalAmount, orderResults);
+    }
+
+    private int calculateTotalPrice(List<OrderResultDto> orderResults) {
+        return orderResults.stream()
+                .mapToInt(OrderResultDto::getTotalPrice)
+                .sum();
+    }
+
+    private int calculateTotalDiscount(List<OrderResultDto> orderResults) {
+        return orderResults.stream()
+                .mapToInt(OrderResultDto::getDiscountedPrice)
+                .sum();
     }
 }
