@@ -14,6 +14,7 @@ public class OrderValidator {
         boolean isEnough = totalStock >= requestedQuantity;
 
         int availableGiftQuantity = calculateAvailableGiftQuantity(productName, requestedQuantity);
+
         int promotionQuantity = calculatePromotionQuantity(productName, requestedQuantity);
         int noPromotionQuantity = calculateNoPromotionQuantity(productName, requestedQuantity, promotionQuantity);
 

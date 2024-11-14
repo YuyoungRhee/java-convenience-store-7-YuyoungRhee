@@ -39,7 +39,8 @@ public class Order {
 
     public boolean canProceedOrder() {
         OrderCheckDto orderCheckDto = checkOrder();
-        return isConfirmedNoPromotion || (orderCheckDto.isEnough() && orderCheckDto.getAvailableGiftQuantity() == 0 && orderCheckDto.getNoPromotionQuantity() == 0);
+        return isConfirmedNoPromotion || (orderCheckDto.isEnough() && orderCheckDto.getAvailableGiftQuantity() == 0
+                && orderCheckDto.getNoPromotionQuantity() == 0);
     }
 
 }

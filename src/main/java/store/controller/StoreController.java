@@ -23,7 +23,6 @@ public class StoreController {
         this.orderService = orderService;
         this.inventory = inventory;
         this.seller = initializeSeller();
-
     }
 
     public void run() {

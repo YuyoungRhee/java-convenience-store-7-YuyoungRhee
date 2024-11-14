@@ -20,7 +20,6 @@ public class Product {
     }
 
     public void reduceQuantity(int requestQuantity) {
-        //예외처리?
         int reducedQuantity = Math.min(quantity, requestQuantity);
 
         quantity -= reducedQuantity;
