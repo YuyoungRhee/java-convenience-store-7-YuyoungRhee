@@ -1,5 +1,7 @@
-package store.domain;
+package store.domain.order;
 
+import store.domain.Inventory;
+import store.domain.Product;
 import store.dto.OrderCheckDto;
 
 public class OrderValidator {

@@ -2,7 +2,7 @@ package store.service;
 
 import java.util.List;
 import store.domain.Inventory;
-import store.domain.Order;
+import store.domain.order.Order;
 import store.domain.Product;
 import store.dto.OrderResultDto;
 

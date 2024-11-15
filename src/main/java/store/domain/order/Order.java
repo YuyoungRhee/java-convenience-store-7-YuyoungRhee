@@ -1,4 +1,4 @@
-package store.domain;
+package store.domain.order;
 
 import store.dto.OrderCheckDto;
 

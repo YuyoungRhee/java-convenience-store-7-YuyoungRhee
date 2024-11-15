@@ -5,7 +5,7 @@ import store.controller.OrderHandler;
 import store.controller.StorageInitializer;
 import store.controller.StoreController;
 import store.domain.Inventory;
-import store.domain.OrderValidator;
+import store.domain.order.OrderValidator;
 import store.service.PromotionCalculator;
 import store.service.OrderProcessor;
 import store.view.InputView;

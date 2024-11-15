@@ -1,8 +1,7 @@
-package store.domain;
+package store.domain.order;
 
 import java.util.ArrayList;
 import java.util.List;
-import store.domain.Order;
 import store.dto.OrderRequestDto;
 
 public class OrderFactory {

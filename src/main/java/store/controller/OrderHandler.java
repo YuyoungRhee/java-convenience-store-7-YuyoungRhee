@@ -3,12 +3,12 @@ package store.controller;
 import java.util.ArrayList;
 import java.util.List;
 import store.domain.Inventory;
-import store.domain.Order;
-import store.domain.OrderValidator;
+import store.domain.order.Order;
+import store.domain.order.OrderValidator;
 import store.dto.OrderCheckDto;
 import store.dto.OrderRequestDto;
 import store.dto.OrderResultDto;
-import store.domain.OrderFactory;
+import store.domain.order.OrderFactory;
 import store.service.OrderProcessor;
 
 public class OrderHandler {

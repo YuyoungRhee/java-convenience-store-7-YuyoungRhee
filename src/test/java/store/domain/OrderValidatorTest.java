@@ -3,6 +3,7 @@ package store.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.domain.order.OrderValidator;
 import store.domain.promotion.NoPromotion;
 import store.domain.promotion.Promotion;
 import store.domain.promotionCondition.PromotionCondition;
