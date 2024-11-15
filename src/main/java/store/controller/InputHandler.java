@@ -50,7 +50,7 @@ public class InputHandler {
             try {
                 String input = inputView.readAnswerForNoPromotion(prompt);
                 InputValidator.validateYesOrNo(input);  // 유효성 검사
-                return input.equalsIgnoreCase("Y");
+                return input.equalsIgnoreCase("Y") || input.equals("y");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
@@ -68,7 +68,7 @@ public class InputHandler {
             try {
                 String input = inputView.readAnswerForAdditionalGift(prompt);
                 InputValidator.validateYesOrNo(input);  // 유효성 검사
-                return input.equalsIgnoreCase("Y");
+                return input.equalsIgnoreCase("Y") || input.equals("y");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
@@ -80,7 +80,7 @@ public class InputHandler {
             try {
                 String input = inputView.readAnswerForApplyDiscount();
                 InputValidator.validateYesOrNo(input);
-                return input.equals("Y");
+                return input.equals("Y") || input.equals("y");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
@@ -93,7 +93,7 @@ public class InputHandler {
 
                 String input = inputView.readAnswerForAdditionalPurchase();
                 InputValidator.validateYesOrNo(input);
-                return input.equals("Y");
+                return input.equals("Y") || input.equals("y");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }

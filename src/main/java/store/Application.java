@@ -1,11 +1,12 @@
 package store;
 
 import store.controller.InputHandler;
+import store.controller.OrderHandler;
 import store.controller.StorageInitializer;
 import store.controller.StoreController;
 import store.domain.Inventory;
+import store.domain.OrderValidator;
 import store.service.OrderFactoryService;
-import store.service.OrderService;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -21,9 +22,11 @@ public class Application {
         InputHandler inputHandler = new InputHandler(inputView);
 
         OrderFactoryService orderFactoryService = new OrderFactoryService(inventory, inputHandler);
-        OrderService orderService = new OrderService(inputHandler, orderFactoryService);
+        OrderValidator orderValidator = new OrderValidator(inventory);
 
-        StoreController controller = new StoreController(inputHandler, outputView, inventory, orderService);
+        OrderHandler orderHandler = new OrderHandler(inputHandler, orderFactoryService, orderValidator, inventory);
+
+        StoreController controller = new StoreController(inputHandler, outputView, inventory, orderHandler);
 
         controller.run();
 

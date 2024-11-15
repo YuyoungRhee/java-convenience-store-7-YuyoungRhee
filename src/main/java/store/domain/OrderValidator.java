@@ -40,33 +40,25 @@ public class OrderValidator {
 
     private int calculatePromotionQuantity(String productName, int requestedQuantity) {
         int promotionQuantity = 0;
-        int remainingQuantity = requestedQuantity;
 
-        for (Product product : inventory.getProducts(productName)) {
-            int usedQuantity = Math.min(remainingQuantity, product.getQuantity());
-            promotionQuantity += product.getPromotionQuantity(remainingQuantity);
-            remainingQuantity -= usedQuantity;
-            if (remainingQuantity <= 0) break;
+        for(Product product : inventory.getProducts(productName)) {
+            if(product.isPromotionProduct()) {
+                promotionQuantity += product.getQuantity();
+            }
         }
-        return promotionQuantity;
+        return Math.min(promotionQuantity, requestedQuantity);
     }
 
     private int calculateNoPromotionQuantity(String productName, int requestedQuantity, int promotionQuantity) {
-        if (requestedQuantity <= promotionQuantity) {
+        if(requestedQuantity <= promotionQuantity) {
             return 0;
         }
 
-        int noPromotionQuantity = 0;
-        int remainingQuantity = requestedQuantity;
-
+        int usedPromotionQuantity = 0;
         for (Product product : inventory.getProducts(productName)) {
-            int applicableQuantity = Math.min(requestedQuantity, product.getQuantity());
-            noPromotionQuantity += product.excludeDiscountQuantity(applicableQuantity);
-            remainingQuantity -= applicableQuantity;
-
-            if (remainingQuantity <= 0) break;
+            usedPromotionQuantity += product.getPromotionQuantity(requestedQuantity);
         }
 
-        return requestedQuantity - promotionQuantity;
+        return  requestedQuantity - usedPromotionQuantity;
     }
 }

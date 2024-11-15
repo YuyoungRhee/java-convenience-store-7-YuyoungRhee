@@ -27,8 +27,8 @@ public class Product {
 
     public int getPromotionQuantity(int requestQuantity) {
         if(promotion.isActive()) {
-            int usedQuantity = Math.min(requestQuantity, quantity);
-            return usedQuantity - promotion.getNonDiscountableQuantity(usedQuantity);
+            int currentQuantity = Math.min(requestQuantity, quantity);
+            return currentQuantity - promotion.getNonDiscountableQuantity(currentQuantity);
         }
         return 0;
     }
@@ -52,6 +52,10 @@ public class Product {
 
     public int excludeDiscountQuantity(int requestedQuantity) {
         return promotion.getNonDiscountableQuantity(requestedQuantity);
+    }
+
+    public boolean isPromotionProduct() {
+        return promotion.isActive();
     }
 
     public int getQuantity() {
