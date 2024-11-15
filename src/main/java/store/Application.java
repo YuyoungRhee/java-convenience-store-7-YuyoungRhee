@@ -24,7 +24,7 @@ public class Application {
         OrderValidator orderValidator = new OrderValidator(inventory);
         PromotionCalculator promotionCalculator = new PromotionCalculator();
         OrderProcessor orderProcessor = new OrderProcessor(inventory, promotionCalculator);
-        OrderHandler orderHandler = new OrderHandler(inputHandler, orderValidator, orderProcessor);
+        OrderHandler orderHandler = new OrderHandler(inputHandler, inventory, orderProcessor);
 
         StoreController controller = new StoreController(inputHandler, outputView, inventory, orderHandler);
 

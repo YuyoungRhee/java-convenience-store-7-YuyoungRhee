@@ -13,13 +13,13 @@ import store.service.OrderProcessor;
 
 public class OrderHandler {
     private final InputHandler inputHandler;
-    private final OrderValidator orderValidator;
     private final OrderProcessor orderProcessor;
+    private final OrderValidator orderValidator;
 
-    public OrderHandler(InputHandler inputHandler, OrderValidator orderValidator, OrderProcessor orderProcessor) {
+    public OrderHandler(InputHandler inputHandler, Inventory inventory, OrderProcessor orderProcessor) {
         this.inputHandler = inputHandler;
-        this.orderValidator = orderValidator;
         this.orderProcessor = orderProcessor;
+        this.orderValidator = new OrderValidator(inventory);
     }
 
     public List<OrderResultDto> processOrders() {
@@ -28,7 +28,7 @@ public class OrderHandler {
         while (true) {
             try {
                 List<OrderRequestDto> orderRequests = inputHandler.getOrderRequests();
-                List<Order> orders = OrderFactory.createOrders(orderRequests);
+                List<Order> orders = OrderFactory.createOrders(orderRequests, orderValidator);
 
                 for (Order order : orders) {
                     orderResults.add(checkAndProcessSingleOrder(order));
@@ -42,7 +42,7 @@ public class OrderHandler {
 
     private OrderResultDto checkAndProcessSingleOrder(Order order) {
         while (true) {
-            OrderCheckDto orderCheckDto = orderValidator.checkOrder(order.getProductName(), order.getPurchaseQuantity());
+            OrderCheckDto orderCheckDto = order.validateOrder();
 
             if (canProceedOrder(order)) {
                 return orderProcessor.processOrder(order);
@@ -61,25 +61,21 @@ public class OrderHandler {
     }
 
     private void handleAvailableGiftQuantity(OrderCheckDto orderCheckDto, Order order) {
+        boolean addGift = false;
         if (orderCheckDto.getAvailableGiftQuantity() > 0) {
-            boolean addGift = inputHandler.askForAdditionalGift(orderCheckDto.getProductName(),
+            addGift = inputHandler.askForAdditionalGift(orderCheckDto.getProductName(),
                     orderCheckDto.getAvailableGiftQuantity());
-            if (addGift) {
-                order.addAvailableGiftQuantity(orderCheckDto.getAvailableGiftQuantity());
-            }
         }
-        order.setConfirmAvailableGift();
+        order.applyAvailableGift(orderCheckDto.getAvailableGiftQuantity(), addGift);
+
     }
 
     private void handleNoPromotionQuantity(OrderCheckDto orderCheckDto, Order order) {
+        boolean confirmRegularPrice = true;
         if (orderCheckDto.getNoPromotionQuantity() > 0) {
-            boolean confirmRegularPrice = inputHandler.askForNoPromotion(orderCheckDto.getProductName(),
+            confirmRegularPrice = inputHandler.askForNoPromotion(orderCheckDto.getProductName(),
                     orderCheckDto.getNoPromotionQuantity());
-
-            if (!confirmRegularPrice) {
-                order.excludeNoPromotionQuantity(orderCheckDto.getNoPromotionQuantity());
-            }
         }
-        order.setConfirmNoPromotion();
+        order.applyNoPromotionQuantity(orderCheckDto.getNoPromotionQuantity(), confirmRegularPrice);
     }
 }
