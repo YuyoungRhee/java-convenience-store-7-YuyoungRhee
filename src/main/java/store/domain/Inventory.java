@@ -45,19 +45,6 @@ public class Inventory {
         return new OrderResultDto(productName, requestQuantity, giftQuantity, totalPrice, promotionDiscountedPrice);
     }
 
-    public InventoryDto toDto() {
-        List<ProductDto> productDtos = stock.values().stream()
-                .flatMap(List::stream)
-                .map(product -> new ProductDto(
-                        product.getName(),
-                        product.getPrice(),
-                        product.getQuantity(),
-                        product.getPromotion().getPromotionName()))
-                .collect(Collectors.toList());
-
-        return new InventoryDto(productDtos);
-    }
-
     //getter
     public List<Product> getProducts(String productName) {
         return stock.getOrDefault(productName, Collections.emptyList());
@@ -116,4 +103,8 @@ public class Inventory {
         }
     }
 
+    //getter
+    public Map<String, List<Product>> getStock() {
+        return stock;
+    }
 }

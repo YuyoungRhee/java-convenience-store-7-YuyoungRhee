@@ -7,7 +7,6 @@ public class PeriodCondition implements PromotionCondition{
     private final LocalDate startDate;
     private final LocalDate endDate;
 
-
     public PeriodCondition(LocalDate startDate, LocalDate endDate) {
         this.startDate = startDate;
         this.endDate = endDate;

@@ -2,6 +2,7 @@ package store.controller;
 
 import java.util.List;
 import store.domain.Inventory;
+import store.dto.InventoryDto;
 import store.dto.OrderResultDto;
 import store.dto.Receipt;
 import store.domain.Seller;
@@ -39,7 +40,7 @@ public class StoreController {
 
     private void displayStartMessage() {
         outputView.printWelcomeMessage();
-        outputView.printProducts(inventory.toDto());
+        outputView.printProducts(InventoryDto.from(inventory));
         System.out.flush();
     }
 
