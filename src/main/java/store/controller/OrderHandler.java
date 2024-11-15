@@ -9,16 +9,17 @@ import store.dto.OrderCheckDto;
 import store.dto.OrderRequestDto;
 import store.dto.OrderResultDto;
 import store.domain.OrderFactory;
+import store.service.OrderProcessor;
 
 public class OrderHandler {
     private final InputHandler inputHandler;
     private final OrderValidator orderValidator;
-    private final Inventory inventory;
+    private final OrderProcessor orderProcessor;
 
-    public OrderHandler(InputHandler inputHandler, OrderValidator orderValidator, Inventory inventory) {
+    public OrderHandler(InputHandler inputHandler, OrderValidator orderValidator, OrderProcessor orderProcessor) {
         this.inputHandler = inputHandler;
         this.orderValidator = orderValidator;
-        this.inventory = inventory;
+        this.orderProcessor = orderProcessor;
     }
 
     public List<OrderResultDto> processOrders() {
@@ -44,7 +45,7 @@ public class OrderHandler {
             OrderCheckDto orderCheckDto = orderValidator.checkOrder(order.getProductName(), order.getPurchaseQuantity());
 
             if (canProceedOrder(order)) {
-                return inventory.processOrder(order.getProductName(), order.getPurchaseQuantity());
+                return orderProcessor.processOrder(order);
             }
             requestAdditionalInput(orderCheckDto, order);
         }

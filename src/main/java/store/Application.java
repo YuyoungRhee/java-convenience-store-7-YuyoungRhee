@@ -6,6 +6,8 @@ import store.controller.StorageInitializer;
 import store.controller.StoreController;
 import store.domain.Inventory;
 import store.domain.OrderValidator;
+import store.service.PromotionCalculator;
+import store.service.OrderProcessor;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -20,7 +22,9 @@ public class Application {
 
         InputHandler inputHandler = new InputHandler(inputView);
         OrderValidator orderValidator = new OrderValidator(inventory);
-        OrderHandler orderHandler = new OrderHandler(inputHandler, orderValidator, inventory);
+        PromotionCalculator promotionCalculator = new PromotionCalculator();
+        OrderProcessor orderProcessor = new OrderProcessor(inventory, promotionCalculator);
+        OrderHandler orderHandler = new OrderHandler(inputHandler, orderValidator, orderProcessor);
 
         StoreController controller = new StoreController(inputHandler, outputView, inventory, orderHandler);
 
