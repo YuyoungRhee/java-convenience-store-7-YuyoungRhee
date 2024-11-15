@@ -12,27 +12,24 @@ public class Seller {
         this.discountPolicy = discountPolicy;
     }
 
-    public Receipt processPayment(List<OrderResultDto> orderResults, boolean applyDiscount) {
+    public int calculateFinalAmount(List<OrderResultDto> orderResults, boolean applyDiscount) {
         int totalPrice = calculateTotalPrice(orderResults);
         int discountPrice = calculateTotalDiscount(orderResults);
 
-        int finalDiscountPrice = 0;
         if (applyDiscount) {
-            finalDiscountPrice = discountPolicy.applyDiscount(totalPrice - discountPrice);
+            int finalDiscount = discountPolicy.applyDiscount(totalPrice - discountPrice);
+            return totalPrice - discountPrice - finalDiscount;
         }
-
-        int finalAmount = totalPrice - discountPrice - finalDiscountPrice;
-
-        return new Receipt(totalPrice, discountPrice, finalDiscountPrice, finalAmount, orderResults);
+        return totalPrice - discountPrice;
     }
 
-    private int calculateTotalPrice(List<OrderResultDto> orderResults) {
+    public int calculateTotalPrice(List<OrderResultDto> orderResults) {
         return orderResults.stream()
                 .mapToInt(OrderResultDto::getTotalPrice)
                 .sum();
     }
 
-    private int calculateTotalDiscount(List<OrderResultDto> orderResults) {
+    public int calculateTotalDiscount(List<OrderResultDto> orderResults) {
         return orderResults.stream()
                 .mapToInt(OrderResultDto::getDiscountedPrice)
                 .sum();

@@ -2,6 +2,7 @@ package store.controller;
 
 import java.util.List;
 import store.domain.Inventory;
+import store.domain.Payment;
 import store.dto.InventoryDto;
 import store.dto.OrderResultDto;
 import store.dto.Receipt;
@@ -11,7 +12,7 @@ import store.domain.discountPolicy.MembershipDiscountPolicy;
 import store.view.OutputView;
 
 public class StoreController {
-    private final Seller seller;
+    private final Payment payment;
     private final InputHandler inputHandler;
     private final OrderHandler orderHandler;
     private final OutputView outputView;
@@ -22,7 +23,7 @@ public class StoreController {
         this.inputHandler = inputHandler;
         this.orderHandler = orderHandler;
         this.inventory = inventory;
-        this.seller = initializeSeller();
+        this.payment = initializePayment();
     }
 
     public void run() {
@@ -32,7 +33,7 @@ public class StoreController {
             List<OrderResultDto> orderResults = orderHandler.processOrders();
 
             boolean applyDiscount = inputHandler.askApplyDiscount();
-            Receipt receipt = seller.processPayment(orderResults, applyDiscount);
+            Receipt receipt = payment.processPayment(orderResults, applyDiscount);
             outputView.printReceipt(receipt);
 
         } while (wantMorePurchase());
@@ -48,9 +49,10 @@ public class StoreController {
         return inputHandler.askForAdditionalPurchase();
     }
 
-    private Seller initializeSeller() {
+    private Payment initializePayment() {
         DiscountPolicy discountPolicy = new MembershipDiscountPolicy();
-        return new Seller(discountPolicy);
+        Seller seller = new Seller(discountPolicy);
+        return new Payment(seller);
     }
 
 }
