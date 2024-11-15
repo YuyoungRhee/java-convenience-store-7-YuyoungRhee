@@ -34,17 +34,4 @@ public class PromotionCalculator {
         return promotionDiscountedPrice;
     }
 
-    public int calculateNoPromotionQuantity(List<Product> products, int requestQuantity) {
-        int promotionQuantity = 0;
-        int remainingQuantity = requestQuantity;
-
-        for (Product product : products) {
-            if (product.isPromotionProduct()) {
-                promotionQuantity += product.getQuantity();
-            }
-        }
-
-        return Math.max(0, requestQuantity - promotionQuantity);
-    }
-
 }

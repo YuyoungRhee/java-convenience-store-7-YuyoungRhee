@@ -44,15 +44,11 @@ public class OrderHandler {
         while (true) {
             OrderCheckDto orderCheckDto = order.validateOrder();
 
-            if (canProceedOrder(order)) {
+            if (!order.isAdditionalInputRequired()) {
                 return orderProcessor.processOrder(order);
             }
             requestAdditionalInput(orderCheckDto, order);
         }
-    }
-
-    private boolean canProceedOrder(Order order) {
-        return order.isConfirmAvailableGift() && order.isConfirmNoPromotion();
     }
 
     private void requestAdditionalInput(OrderCheckDto orderCheckDto, Order order) {

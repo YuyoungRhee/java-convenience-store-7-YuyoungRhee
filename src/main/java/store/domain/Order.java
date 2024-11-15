@@ -15,6 +15,10 @@ public class Order {
         this.orderValidator = orderValidator;
     }
 
+    public boolean isAdditionalInputRequired() {
+        return !isConfirmAvailableGift || !isConfirmNoPromotion;
+    }
+
     public OrderCheckDto validateOrder() {
         return orderValidator.checkOrder(productName, purchaseQuantity);
     }
@@ -50,14 +54,6 @@ public class Order {
 
     public int getPurchaseQuantity() {
         return purchaseQuantity;
-    }
-
-    public boolean isConfirmAvailableGift() {
-        return isConfirmAvailableGift;
-    }
-
-    public boolean isConfirmNoPromotion() {
-        return isConfirmNoPromotion;
     }
 
 }
