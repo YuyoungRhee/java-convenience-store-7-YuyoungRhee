@@ -45,17 +45,7 @@ public class InputHandler {
                 "현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)",
                 productName, noPromotionQuantity
         );
-
-        while (true) {
-            try {
-                String input = inputView.readAnswerForNoPromotion(prompt);
-                InputValidator.validateYesOrNo(input);  // 유효성 검사
-                return input.equalsIgnoreCase("Y") || input.equals("y");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
+        return askYesOrNo(prompt);
     }
 
     public boolean askForAdditionalGift(String productName, int additionalGift) {
@@ -63,40 +53,27 @@ public class InputHandler {
                 "현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)",
                 productName, additionalGift
         );
-
-        while (true) {
-            try {
-                String input = inputView.readAnswerForAdditionalGift(prompt);
-                InputValidator.validateYesOrNo(input);  // 유효성 검사
-                return input.equalsIgnoreCase("Y") || input.equals("y");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        return askYesOrNo(prompt);
     }
 
     public boolean askApplyDiscount() {
-        while (true) {
-            try {
-                String input = inputView.readAnswerForApplyDiscount();
-                InputValidator.validateYesOrNo(input);
-                return input.equals("Y") || input.equals("y");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
-        }
+        return askYesOrNo("\n멤버십 할인을 받으시겠습니까? (Y/N)");
     }
 
     public boolean askForAdditionalPurchase() {
+        return askYesOrNo("\n감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
+    }
+
+    private boolean askYesOrNo(String prompt) {
         while (true) {
             try {
-
-                String input = inputView.readAnswerForAdditionalPurchase();
+                String input = inputView.readYesOrNo(prompt);
                 InputValidator.validateYesOrNo(input);
-                return input.equals("Y") || input.equals("y");
+                return input.equalsIgnoreCase("Y");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
         }
     }
+
 }

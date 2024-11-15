@@ -8,18 +8,15 @@ import store.domain.OrderValidator;
 import store.dto.OrderCheckDto;
 import store.dto.OrderRequestDto;
 import store.dto.OrderResultDto;
-import store.service.OrderFactoryService;
+import store.domain.OrderFactory;
 
 public class OrderHandler {
     private final InputHandler inputHandler;
-    private final OrderFactoryService orderFactoryService;
     private final OrderValidator orderValidator;
     private final Inventory inventory;
 
-    public OrderHandler(InputHandler inputHandler, OrderFactoryService orderFactoryService,
-                        OrderValidator orderValidator, Inventory inventory) {
+    public OrderHandler(InputHandler inputHandler, OrderValidator orderValidator, Inventory inventory) {
         this.inputHandler = inputHandler;
-        this.orderFactoryService = orderFactoryService;
         this.orderValidator = orderValidator;
         this.inventory = inventory;
     }
@@ -30,7 +27,7 @@ public class OrderHandler {
         while (true) {
             try {
                 List<OrderRequestDto> orderRequests = inputHandler.getOrderRequests();
-                List<Order> orders = orderFactoryService.createOrders(orderRequests);
+                List<Order> orders = OrderFactory.createOrders(orderRequests);
 
                 for (Order order : orders) {
                     orderResults.add(checkAndProcessSingleOrder(order));
