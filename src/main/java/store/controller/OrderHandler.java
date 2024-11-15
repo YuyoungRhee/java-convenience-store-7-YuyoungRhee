@@ -43,24 +43,18 @@ public class OrderHandler {
         while (true) {
             OrderCheckDto orderCheckDto = orderValidator.checkOrder(order.getProductName(), order.getPurchaseQuantity());
 
-            if (canProceedOrder(orderCheckDto, order)) {
+            if (canProceedOrder(order)) {
                 return inventory.processOrder(order.getProductName(), order.getPurchaseQuantity());
-            } else {
-                requestAdditionalInput(orderCheckDto, order);
             }
+            requestAdditionalInput(orderCheckDto, order);
         }
     }
 
-    private boolean canProceedOrder(OrderCheckDto orderCheckDto, Order order) {
-        return orderCheckDto.isEnough() &&
-                order.isConfirmAvailableGift() && order.isConfirmNoPromotion();
+    private boolean canProceedOrder(Order order) {
+        return order.isConfirmAvailableGift() && order.isConfirmNoPromotion();
     }
 
     private void requestAdditionalInput(OrderCheckDto orderCheckDto, Order order) {
-        if (!orderCheckDto.isEnough()) {
-            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
-        }
-
         handleAvailableGiftQuantity(orderCheckDto, order);
         handleNoPromotionQuantity(orderCheckDto, order);
     }

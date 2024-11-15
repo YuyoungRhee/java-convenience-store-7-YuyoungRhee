@@ -16,11 +16,18 @@ public class Inventory {
         this.stock = new LinkedHashMap<>(initialStock);
     }
 
+    public void checkStock(String productName, int requestedQuantity) {
+        int totalStock = getAvailableStock(productName);
+        if (totalStock < requestedQuantity) {
+            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
+        }
+    }
+
     public int getAvailableStock(String productName) {
         List<Product> products = stock.get(productName);
 
         if (products == null) {
-            throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다: " + productName);
+            throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다: 다시 입력해주세요.");
         }
 
         return products.stream()
@@ -30,7 +37,6 @@ public class Inventory {
 
     public OrderResultDto processOrder(String productName, int requestQuantity) {
         List<Product> products = stock.get(productName);
-
         int giftQuantity = calculateGiftQuantity(products, requestQuantity);
         int totalPrice = calculateTotalPrice(products, requestQuantity);
         int promotionDiscountedPrice = calculatePromotionDiscount(products, requestQuantity);

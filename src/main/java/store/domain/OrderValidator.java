@@ -10,19 +10,17 @@ public class OrderValidator {
     }
 
     public OrderCheckDto checkOrder(String productName, int requestedQuantity) {
-        int totalStock = inventory.getAvailableStock(productName);
-        boolean isEnough = totalStock >= requestedQuantity;
+        inventory.checkStock(productName, requestedQuantity);
 
         int availableGiftQuantity = calculateAvailableGiftQuantity(productName, requestedQuantity);
-
         int promotionQuantity = calculatePromotionQuantity(productName, requestedQuantity);
-        int noPromotionQuantity = calculateNoPromotionQuantity(productName, requestedQuantity, promotionQuantity);
 
+        int noPromotionQuantity = calculateNoPromotionQuantity(productName, requestedQuantity, promotionQuantity);
         if (promotionQuantity == 0) {
             noPromotionQuantity = 0;
         }
 
-        return new OrderCheckDto(productName, isEnough, availableGiftQuantity, noPromotionQuantity);
+        return new OrderCheckDto(productName, availableGiftQuantity, noPromotionQuantity);
     }
 
     private int calculateAvailableGiftQuantity(String productName, int requestedQuantity) {

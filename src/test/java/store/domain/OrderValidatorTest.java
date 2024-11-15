@@ -32,24 +32,6 @@ class OrderValidatorTest {
         orderValidator = new OrderValidator(inventory);
     }
 
-    @Test
-    @DisplayName("재고가 충분할 경우, 주문 확인 결과가 '충분함'으로 반환된다")
-    void check_stockEnough() {
-        int requestedQuantity = 15;
-        OrderCheckDto orderCheckDto = orderValidator.checkOrder("콜라", requestedQuantity);
-
-        assertThat(orderCheckDto.isEnough()).isTrue();
-    }
-
-    @Test
-    @DisplayName("재고가 부족할 경우, 주문 확인 결과가 '충분하지 않음'으로 반환된다")
-    void check_stockNotEnough() {
-        int requestedQuantity = 25;
-        OrderCheckDto orderCheckDto = orderValidator.checkOrder("콜라", requestedQuantity);
-
-        assertThat(orderCheckDto.isEnough()).isFalse();
-    }
-
     @DisplayName("프로모션 적용이 가능한 상품에 대해 해당 수량만큼 구매하지 않을 경우, 추가 증정이 가능한 수량이 반환된다")
     @Test
     void check_availableGiftQuantity() {
@@ -75,6 +57,6 @@ class OrderValidatorTest {
             orderValidator.checkOrder("사이다", 1);
         });
 
-        assertThat(exception.getMessage()).isEqualTo("[ERROR] 존재하지 않는 상품입니다: 사이다");
+        assertThat(exception.getMessage()).isEqualTo("[ERROR] 존재하지 않는 상품입니다: 다시 입력해주세요.");
     }
 }

@@ -45,7 +45,7 @@ class InventoryTest {
             inventory.getAvailableStock("사이다");
         });
 
-        assertThat(exception.getMessage()).isEqualTo("[ERROR] 존재하지 않는 상품입니다: 사이다");
+        assertThat(exception.getMessage()).isEqualTo("[ERROR] 존재하지 않는 상품입니다: 다시 입력해주세요.");
     }
 
 
